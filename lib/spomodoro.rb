@@ -5,34 +5,33 @@ require 'faraday'
 require 'faraday_middleware'
 require 'faker'
 require 'base64'
-require 'pry'
 
 class Spomodoro
-  attr_accessor :user_id, :source_playlist, :client_id, :spotify_token, :track_uri, :playlist_id
+  attr_accessor :user_id, :source_playlist, :spotify_refresh_token, :client_credentials, :spotify_token, :track_uri, :playlist_id
 
   def initialize
     @user_id = ENV['SPOTIFY_USER_ID']
     @source_playlist = ENV['SPOTIFY_SOURCE_PLAYLIST_ID']
+    @spotify_refresh_token = ENV['SPOTIFY_REFRESH_TOKEN']
 
     #Get Authorization Token
     client_id = ENV['SPOTIFY_CLIENT_ID']
     client_secret = ENV['SPOTIFY_CLIENT_SECRET']
-    client_credentials = Base64.strict_encode64(client_id + ":" + client_secret)
-    token = auth_spotify(client_credentials).body
+    @client_credentials = Base64.strict_encode64(client_id + ":" + client_secret)
+    token = auth_spotify('post').body
     @spotify_token = token['access_token']
   end
 
-  def auth_spotify(client_credentials)
+  def auth_spotify(verb)
     conn = Faraday.new(:url => 'https://accounts.spotify.com') do |faraday|
       faraday.adapter Faraday.default_adapter
       faraday.response :json, :content_type => /\bjson$/
-      faraday.response :logger
     end
 
-    response = conn.post do |req|
+    response = conn.send(verb) do |req|
       req.headers['Authorization'] = 'Basic ' + client_credentials
       req.url "/api/token"
-      req.body = "grant_type=client_credentials"
+      req.body = "grant_type=refresh_token&refresh_token=" + spotify_refresh_token
     end
 
     return response
@@ -47,7 +46,9 @@ class Spomodoro
       url = "/v1/users/#{user_id}/playlists"
       body = args[0]
     when 'tracks'
+      playlist_id = args[0]
       url = "/v1/users/#{user_id}/playlists/#{playlist_id}/tracks"
+      body = args[1]
     when 'authorize'
       url = "/"
     end
@@ -56,7 +57,6 @@ class Spomodoro
       faraday.adapter Faraday.default_adapter
       faraday.request :json
       faraday.response :json, :content_type => /\bjson$/
-      #faraday.response :logger
     end
 
     response = conn.send(verb) do |req|
@@ -104,11 +104,10 @@ class Spomodoro
   def create_playlist(data)
     #create new spotify playlist
     playlist_name = "pomodoro-" + Faker::Hipster.word + "-" + Faker::Hipster.word
-    playlist_payload = {:name => playlist_name}.to_json
-    playlist_id = query_spotify('post','create_playlist', args:[playlist_payload])
+    playlist_payload = {:name => playlist_name, :public => false}.to_json
+    playlist_id = query_spotify('post','create_playlist', args:[playlist_payload])['id']
     #Post Data to New Playlist
-    binding.pry
-    query_spotify('post','tracks',playlist_id,data)
+    query_spotify('post','tracks', args:[playlist_id, data])
   end
 
 end
