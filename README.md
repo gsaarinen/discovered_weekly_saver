@@ -28,10 +28,6 @@ Please join me in celebrating my very first AUTOMATICALLY CREATED Pomodoro playl
 
 https://play.spotify.com/user/1214768777/playlist/6Z7TOUr0bnosHktl54JODi
 
-And here it is, embedded:
-
-<iframe src="https://embed.spotify.com/?uri=spotify%3Auser%3A1214768777%3Aplaylist%3A6Z7TOUr0bnosHktl54JODi" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>
-
 ---
 
 Oh my god, and thank you to [Faker](https://github.com/stympy/faker) for the lovely gem that I am using to randomly generate the Playlist names. They're hilarious every time.
