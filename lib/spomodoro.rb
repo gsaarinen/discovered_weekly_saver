@@ -10,13 +10,13 @@ class Spomodoro
   attr_accessor :user_id, :source_playlist, :spotify_refresh_token, :client_credentials, :spotify_token, :track_uri, :playlist_id
 
   def initialize
-    @user_id = ENV['1238786119']
-    @source_playlist = ENV['3vkxSqwzyLgS343oZyBieK']
-    @spotify_refresh_token = ENV['AQAwXKDGcyygeXvN63i0lc7nJS-6HSxlXysBps7jdTRTLiMB1bFhQ-ddhYFW_JSRDbwT33XIf45Uh1f1Eu78mWSw7CABHy4zGbPRtpaSSdRMcyFdGw4AovvqYHqPJhA7TPUPphsA0jRMgMfR55Phu0Zo_MBv9M1I6n1ZGhrm3-6hB54ddsMyN101la42LBtEh0f5ouyTPe6X2m4VlCftVlIrjsJ69LlI8MKIs7CZYg0XTDBJjko&state=34fFs29kd09']
+    @user_id = ENV['SPOTIFY_USER_ID']
+    @source_playlist = ENV['SPOTIFY_SOURCE_PLAYLIST_ID']
+    @spotify_refresh_token = ENV['SPOTIFY_REFRESH_TOKEN']
 
-    #Get Authorization Token
-    client_id = ENV['ea4fb24e0f7648af81ba7a7acea9bbf0']
-    client_secret = ENV['701ac2df7a57441894d1d296d0995214']
+    #Get Authorization Token         
+    client_id = ENV['SPOTIFY_CLIENT_ID']
+    client_secret = ENV['SPOTIFY_CLIENT_SECRET']
     @client_credentials = Base64.strict_encode64(client_id + ":" + client_secret)
     token = auth_spotify('post').body
     @spotify_token = token['access_token']
