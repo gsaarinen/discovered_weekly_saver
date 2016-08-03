@@ -1,3 +1,4 @@
+dotenv.load
 require 'rubygems'
 require 'bundler/setup'
 require 'json'
@@ -5,6 +6,8 @@ require 'faraday'
 require 'faraday_middleware'
 require 'faker'
 require 'base64'
+require 'dotenv'
+require 'pry'
 
 class Spomodoro
   attr_accessor :user_id, :source_playlist, :spotify_refresh_token, :client_credentials, :spotify_token, :track_uri, :playlist_id
